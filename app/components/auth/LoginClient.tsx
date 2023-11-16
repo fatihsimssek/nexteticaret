@@ -6,8 +6,12 @@ import Button from "../general/Button"
 import Heading from "../general/Heading"
 import Input from "../general/Input"
 import Link from 'next/link';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 const LoginClient = () => {
+  const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -15,7 +19,20 @@ const LoginClient = () => {
     formState: { errors },
   } = useForm<FieldValues>()
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    
+    signIn('credentials', {
+      ...data,
+      redirect: false
+    }).then((callback) => {
+      if (callback?.ok) { 
+        router.push('/cart')
+        router.refresh()
+        toast.success('Giriş Başarılı...')
+      }
+
+      if (callback?.error) {
+        toast.error(callback.error)
+      }
+    })
   }
   return (
     

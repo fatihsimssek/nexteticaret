@@ -11,7 +11,7 @@ const Detail = ({ params }: { params: DetailProps }) => {
     const {productId}= params
     const product = products.find(product => product.id == productId)
     
-    console.log(product, 'product')
+    //console.log(product, 'product')
   return (
       <div>
           <DetailClient product={product}/>

@@ -1,8 +1,57 @@
-import React from 'react'
+'use client'
+import { User } from '@prisma/client'
+import {AiOutlineUser} from 'react-icons/ai'
+import { useState } from 'react';
+import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
-const User = () => {
+
+interface UserProps {
+  currentUser: User|null|undefined
+}
+const User: React.FC<UserProps> = ({ currentUser }) => {
+  const router= useRouter()
+  const [openMenu, setOpenMenu] = useState(false)
+ 
+
+  const menuFunc = ( type: string) => {
+    if (type == 'logout') {
+      setOpenMenu(false)
+      signOut();
+      router.push('/login')
+    } else if (type=='register') {
+      router.push('/register')
+    } else {
+      router.push('/login')
+    }
+  }
+
   return (
-    <div className='hidden md:flex'>User</div>
+    <div className='hidden md:flex relative'>
+      <div onClick={()=> setOpenMenu(!openMenu)} className='flex items-center gap-2 cursor-pointer'>
+        <AiOutlineUser size='25' />
+        <div>{currentUser?currentUser.name : 'User'}</div>
+      </div>
+      {
+        openMenu && (
+          <div className='absolute w-[150px] top-10 bg-white shadow-lg right-0 p-2 rounded-md'>
+            {
+              currentUser ? (
+                <div className='space-y-1'>
+                  <div className='text-slate-600 cursor-pointer'>Admin</div>
+                  <div onClick={()=> menuFunc('logout')} className='text-slate-600 cursor-pointer'>Logout</div>
+                </div>
+              ) : (
+                  <div>
+                    <div onClick={()=> menuFunc('register')}  className='text-slate-600'>Register</div>
+                    <div onClick={()=> menuFunc('login')}  className='text-slate-600'>Login</div>
+                  </div>
+              )
+            }
+          </div>
+        )
+      }
+    </div>
   )
 }
 
