@@ -9,8 +9,14 @@ import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { User } from '@prisma/client';
+import { useEffect } from 'react';
 
-const LoginClient = () => {
+interface LoginClientProps {
+  currentUser: User|null|undefined
+}
+
+const LoginClient:React.FC<LoginClientProps> = ({currentUser}) => {
   const router = useRouter()
   const {
     register,
@@ -34,6 +40,13 @@ const LoginClient = () => {
       }
     })
   }
+
+  useEffect(() => {
+    if (currentUser) { 
+      router.push('/cart')
+      router.refresh()
+    }
+  },[])
   return (
     
     <AuthContainer>
@@ -44,7 +57,7 @@ const LoginClient = () => {
         <Button text="Giriş Yap" onClick={handleSubmit(onSubmit)} />
         <div className= "text-center my-2 text-sm text-red-500">Daha Önce Kayıt Olmadıysanız <Link className='underline' href= '/register'>Buraya tıklayın.</Link> </div>
         <div className='text-center my-2 font-bold text-lg'>OR</div>
-        <Button text="Google İle Giriş Yap" icon={FaGoogle} outline onClick={handleSubmit(onSubmit)}/>
+        <Button text="Google İle Giriş Yap" icon={FaGoogle} outline onClick={()=> signIn('google')}/>
       </div>
       </AuthContainer>
     
